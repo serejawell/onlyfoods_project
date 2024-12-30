@@ -1,0 +1,42 @@
+{% extends 'posts/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Левая колонка с аватаром -->
+        <div class="col-md-4 text-center">
+            <img src="{{ user.avatar | media_filter }}" alt="Аватар пользователя" class="rounded-circle shadow mb-4"
+                 style="width: 180px; height: 180px; object-fit: cover;">
+            <h4>{{ user.first_name }} {{ user.last_name }}</h4>
+            <div>
+                <a href="{% url 'users:profile_update' %}" class="btn btn-outline-primary">Редактировать профиль</a>
+            </div>
+            <div>
+                <a href="{% url 'users:logout' %}" class="btn btn-outline-danger">Выйти</a>
+            </div>
+        </div>
+
+        <!-- Правая колонка с информацией -->
+        <div class="col-md-8">
+            <h5 class="mb-4">Детали профиля</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <strong>Дата регистрации:</strong> {{ user.date_joined|date:"d M Y" }}
+                </li>
+                <li class="list-group-item">
+                    <strong>Email:</strong> {{ user.email }}
+                </li>
+                {% if not user.phone %}
+                <li class="list-group-item">
+                    <strong>Номер телефона:</strong> Отсутствует
+                </li>
+                {% else %}
+                <li class="list-group-item">
+                    <strong>Номер телефона:</strong> {{ user.phone }}
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

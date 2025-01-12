@@ -1,122 +1,87 @@
 {% extends 'posts/base.html' %}
+{% block title %}Профиль - Onlyfoods{% endblock %}
 {% load my_tags %}
 {% block content %}
+<div class="container-fluid p-0" style="background-color: #f8f9fa;">
+    <!-- Шапка профиля -->
+    <section class="profile-header py-5 text-center position-relative" style="background: #fdf5e6;">
+        <div class="container d-flex flex-column align-items-center">
+            <!-- Аватар -->
+            <div class="position-relative">
+                <img src="{{ user.avatar | media_filter }}" alt="Аватар пользователя"
+                     class="rounded-circle shadow"
+                     style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #ffffff;">
+            </div>
+            <!-- Имя и username -->
+            <h2 class="fw-bold mt-3" style="color: #9e0505;">{{ user.first_name }} {{ user.last_name }}</h2>
+            <p class="text-muted">@{{ user.username }}</p>
+            {% if user.is_verified %}
+                <span class="badge bg-primary text-white">Проверенный пользователь</span>
+            {% endif %}
+            <!-- Кнопка добавить публикацию -->
+            <div class="mt-4">
+                <a href="{% url 'posts:create' %}" class="btn btn-primary btn-lg"
+                   style="background-color: #9e0505; border: none;">Добавить публикацию</a>
+            </div>
+        </div>
+    </section>
 
+    <!-- Статистика профиля -->
+    <section class="profile-stats py-3 border-top" style="background-color: #ffffff;">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-4">
+                    <h5 class="fw-bold" style="color: #9e0505;">{{ user.posts_count }}</h5>
+                    <p class="text-muted small mb-0">Публикации</p>
+                </div>
+                <div class="col-4">
+                    <h5 class="fw-bold" style="color: #9e0505;">{{ user.followers_count }}</h5>
+                    <p class="text-muted small mb-0">Подписчики</p>
+                </div>
+                <div class="col-4">
+                    <h5 class="fw-bold" style="color: #9e0505;">{{ user.following_count }}</h5>
+                    <p class="text-muted small mb-0">Подписки</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Контент профиля -->
 <div class="container py-5">
-    <div class="row">
-        <!-- Левая колонка -->
-        <div class="col-md-4">
-            <div class="card shadow border-0 text-center">
-                <div class="card-body">
-                    <img src="{{ user.avatar | media_filter }}" alt="Аватар пользователя"
-                         class="rounded-circle mb-3"
-                         style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #f8f9fa;">
-                    <h4 class="fw-bold">{{ user.first_name }} {{ user.last_name }}</h4>
-                    <p class="text-muted">@{{ user.username }}</p>
-                    <div class="mb-3">
-                        <span class="badge bg-primary">Пользователь</span>
-                        {% if user.is_verified %}
-                            <span class="badge bg-success">Проверенный</span>
-                        {% endif %}
-                    </div>
-                    <a href="{% url 'users:profile_update' %}" class="btn btn-outline-primary btn-sm mb-2 w-100">Редактировать профиль</a>
-                    <a href="{% url 'users:logout' %}" class="btn btn-outline-danger btn-sm w-100">Выйти</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Правая колонка -->
-        <div class="col-md-8">
-            <!-- Карточка с основными данными -->
-            <div class="card shadow border-0 mb-4">
-                <div class="card-body">
-                    <h5 class="fw-bold">Информация профиля</h5>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <strong>Дата регистрации:</strong> {{ user.date_joined|date:"d M Y" }}
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Email:</strong> {{ user.email }}
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Номер телефона:</strong>
-                            {% if user.phone_number %}
-                                {{ user.phone_number }}
-                            {% else %}
-                                <span class="text-muted">Не указан</span>
-                            {% endif %}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Карточка достижений -->
-            <div class="card shadow border-0 mb-4">
-                <div class="card-body">
-                    <h5 class="fw-bold">Достижения</h5>
-                    <div class="d-flex flex-wrap">
-                        <div class="badge bg-success m-1">Новичок</div>
-                        <div class="badge bg-info m-1">10+ публикаций</div>
-                        <div class="badge bg-warning m-1">Популярный автор</div>
-                        {% if user.is_verified %}
-                            <div class="badge bg-primary m-1">Проверенный пользователь</div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Секция активности -->
-            <div class="card shadow border-0 mb-4">
-                <div class="card-body">
-                    <h5 class="fw-bold">Последняя активность</h5>
-                    {% if user.activity_list %}
-                        <ul class="list-group">
-                            {% for activity in user.activity_list %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>
-                                        <i class="fas fa-check-circle text-success me-2"></i>
-                                        {{ activity.description }}
-                                    </span>
-                                    <span class="text-muted small">{{ activity.timestamp|timesince }} назад</span>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted">Пока нет активности.</p>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Карточка с личным интересом -->
-            <div class="card shadow border-0">
-                <div class="card-body">
-                    <h5 class="fw-bold">Мои любимые блюда</h5>
-                    {% if user.favorite_recipes %}
-                        <div class="row">
-                            {% for recipe in user.favorite_recipes %}
-                                <div class="col-md-4 mb-3">
-                                    <div class="card">
-                                        <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="card-img-top"
-                                             style="height: 120px; object-fit: cover;">
-                                        <div class="card-body text-center p-2">
-                                            <h6 class="card-title mb-1">{{ recipe.title }}</h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
+    {% if posts %}
+        <div class="row g-3">
+            {% for post in posts %}
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="position-relative">
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="card-img-top"
+                                 style="height: 200px; object-fit: cover;">
+                            <div class="overlay position-absolute w-100 h-100 top-0 start-0 d-flex align-items-center justify-content-center"
+                                 style="background: rgba(0, 0, 0, 0.3); color: white; opacity: 0; transition: opacity 0.3s;">
+                                <a href="{{ post.get_absolute_url }}" class="btn btn-light btn-sm">Смотреть рецепт</a>
+                            </div>
                         </div>
-                    {% else %}
-                        <p class="text-muted">У вас пока нет избранных блюд.</p>
-                    {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title" style="color: #9e0505;">{{ post.title }}</h5>
+                            <p class="card-text text-muted">{{ post.content|truncatechars:80 }}</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
-    </div>
+    {% else %}
+        <p class="text-center text-muted">У вас пока нет публикаций.</p>
+    {% endif %}
 </div>
 
+<style>
+    .card:hover .overlay {
+        opacity: 1;
+    }
+</style>
+
 <script>
-    // Анимация появления элементов
+    // Анимация при скролле
     AOS.init();
 </script>
-
 {% endblock %}

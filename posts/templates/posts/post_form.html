@@ -1,0 +1,44 @@
+{% extends 'posts/base.html' %}
+{% block title %}Создать пост - Onlyfoods{% endblock %}
+{% load static %}
+{% block content %}
+<div class="container py-5" style="background-color: #fdf5e6;">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold" style="color: #9e0505;">Создать новый пост</h1>
+        <p class="text-muted">Поделитесь своим кулинарным шедевром с миром!</p>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5" style="background-color: #ffffff; border-radius: 15px;">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <!-- Поля формы -->
+                        <div class="mb-3">
+                            <label for="id_title" class="form-label" style="color: #9e0505;">Название поста</label>
+                            {{ form.title }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_content" class="form-label" style="color: #9e0505;">Контент</label>
+                            {{ form.content }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_image" class="form-label" style="color: #9e0505;">Изображение</label>
+                            {{ form.image }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.is_premium }}
+                            <label for="id_is_premium" class="form-check-label">Премиум пост</label>
+                        </div>
+                        <!-- Кнопки -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'users:profile' %}" class="btn btn-outline-secondary">Отмена</a>
+                            <button type="submit" class="btn btn-primary" style="background-color: #9e0505; border: none;">Создать пост</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

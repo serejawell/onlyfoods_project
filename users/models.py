@@ -41,9 +41,28 @@ class User(AbstractUser):
         unique=True,
         verbose_name="Телефон"
     )
+    followers = models.ManyToManyField(
+        'self',  # Связь с той же моделью
+        symmetrical=False,  # Симметричная связь не нужна (подписки и подписчики различаются)
+        related_name='following',  # Название обратной связи (список, на кого подписан пользователь)
+        blank=True,
+        null=True,
+        verbose_name='Подписчики'
+    )
 
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
+
+    def posts_count(self):
+        return self.posts.count()
+
+    def followers_count(self):
+        """Возвращает количество подписчиков"""
+        return self.followers.count()
+
+    def following_count(self):
+        """Возвращает количество подписок"""
+        return self.following.count()
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -51,5 +70,3 @@ class User(AbstractUser):
 
     def __str__(self):
         return str(self.phone_number)
-
-

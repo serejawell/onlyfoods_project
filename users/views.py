@@ -5,6 +5,7 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, ListView, DetailView
 
+from posts.models import Post
 from users.forms import UserRegistrationForm, CustomLoginForm, UserProfileForm
 from users.models import User
 from users.email_messages import send_welcome_email
@@ -42,6 +43,12 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Получаем все посты текущего пользователя
+        context['posts'] = Post.objects.filter(author=self.request.user).order_by('-created_at')
+        return context
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):

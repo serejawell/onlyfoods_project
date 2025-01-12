@@ -8,7 +8,7 @@ class User(AbstractUser):
     username = None
     first_name = models.CharField(
         max_length=50,
-        verbose_name='Имя пользоватея',
+        verbose_name='Имя пользователя',
     )
     last_name = models.CharField(
         max_length=50,
@@ -18,18 +18,29 @@ class User(AbstractUser):
         upload_to='users/avatars',
         blank=True,
         null=True,
-        verbose_name='аватар'
+        verbose_name='Аватар'
+    )
+    bio = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name='Описание автора'
+    )
+    stripe_account_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name='Stripe Account ID'
     )
     token = models.CharField(
         max_length=100,
-        verbose_name='токен',
+        verbose_name='Токен',
         blank=True,
-        null=True)
+        null=True
+    )
     phone_number = PhoneNumberField(
         unique=True,
-        verbose_name="Phone Number"
+        verbose_name="Телефон"
     )
-
 
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
@@ -38,7 +49,7 @@ class User(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
-
-
     def __str__(self):
         return str(self.phone_number)
+
+

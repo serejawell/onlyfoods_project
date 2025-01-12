@@ -7,7 +7,7 @@ from django.views.generic import CreateView, UpdateView, ListView, DetailView
 
 from users.forms import UserRegistrationForm, CustomLoginForm, UserProfileForm
 from users.models import User
-from users.email_massages import send_welcome_email
+from users.email_messages import send_welcome_email
 
 
 class RegisterView(CreateView):

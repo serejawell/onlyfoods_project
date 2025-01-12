@@ -4,79 +4,94 @@
 {% block content %}
 <div class="container-fluid p-0" style="background-color: #f8f9fa;">
     <!-- Шапка профиля -->
-    <section class="profile-header py-5 text-center position-relative" style="background: #fdf5e6;">
+    <section class="profile-header py-4 text-center" style="background: linear-gradient(135deg, #fdf5e6, #fdf5e6);">
         <div class="container d-flex flex-column align-items-center">
-            <!-- Аватар -->
-            <div class="position-relative">
-                <img src="{{ user.avatar | media_filter }}" alt="Аватар пользователя"
-                     class="rounded-circle shadow"
-                     style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #ffffff;">
+            <div class="d-flex align-items-center">
+                <!-- Аватар -->
+                <div class="position-relative me-4">
+                    <img src="{{ user.avatar | media_filter }}" alt="Аватар пользователя"
+                         class="rounded-circle shadow"
+                         style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #fdf5e6;">
+                </div>
+                <!-- Имя, username и статистика -->
+                <div class="text-start">
+                    <h2 class="fw-bold" style="color: #9e0505;">{{ user.first_name }} {{ user.last_name }}</h2>
+                    <p class="text-muted">@{{ user.username }}</p>
+                    {% if user.is_verified %}
+                        <span class="badge bg-success text-white">Проверенный пользователь</span>
+                    {% endif %}
+                    <div class="d-flex mt-3">
+                        <div class="me-3 text-center">
+                            <h5 class="fw-bold" style="color: #9e0505;">{{ user.posts_count }}</h5>
+                            <p class="text-muted small mb-0">Публикации</p>
+                        </div>
+                        <div class="me-3 text-center">
+                            <h5 class="fw-bold" style="color: #9e0505;">{{ user.followers_count }}</h5>
+                            <p class="text-muted small mb-0">Подписчики</p>
+                        </div>
+                        <div class="text-center">
+                            <h5 class="fw-bold" style="color: #9e0505;">{{ user.following_count }}</h5>
+                            <p class="text-muted small mb-0">Подписки</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- Имя и username -->
-            <h2 class="fw-bold mt-3" style="color: #9e0505;">{{ user.first_name }} {{ user.last_name }}</h2>
-            <p class="text-muted">@{{ user.username }}</p>
-            {% if user.is_verified %}
-                <span class="badge bg-primary text-white">Проверенный пользователь</span>
-            {% endif %}
             <!-- Кнопка добавить публикацию -->
             <div class="mt-4">
-                <a href="{% url 'posts:create' %}" class="btn btn-primary btn-lg"
-                   style="background-color: #9e0505; border: none;">Добавить публикацию</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Статистика профиля -->
-    <section class="profile-stats py-3 border-top" style="background-color: #ffffff;">
-        <div class="container text-center">
-            <div class="row">
-                <div class="col-4">
-                    <h5 class="fw-bold" style="color: #9e0505;">{{ user.posts_count }}</h5>
-                    <p class="text-muted small mb-0">Публикации</p>
-                </div>
-                <div class="col-4">
-                    <h5 class="fw-bold" style="color: #9e0505;">{{ user.followers_count }}</h5>
-                    <p class="text-muted small mb-0">Подписчики</p>
-                </div>
-                <div class="col-4">
-                    <h5 class="fw-bold" style="color: #9e0505;">{{ user.following_count }}</h5>
-                    <p class="text-muted small mb-0">Подписки</p>
-                </div>
+                <a href="{% url 'posts:create' %}" class="btn btn-danger btn-lg"
+                   style="padding: 10px 20px; font-size: 1rem;">Добавить публикацию</a>
             </div>
         </div>
     </section>
 
     <!-- Контент профиля -->
-<div class="container py-5">
-    {% if posts %}
-        <div class="row g-3">
-            {% for post in posts %}
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="position-relative">
-                            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="card-img-top"
-                                 style="height: 200px; object-fit: cover;">
-                            <div class="overlay position-absolute w-100 h-100 top-0 start-0 d-flex align-items-center justify-content-center"
-                                 style="background: rgba(0, 0, 0, 0.3); color: white; opacity: 0; transition: opacity 0.3s;">
-                                <a href="{{ post.get_absolute_url }}" class="btn btn-light btn-sm">Смотреть рецепт</a>
+    <div class="container py-5">
+        {% if posts %}
+            <h4 class="text-center fw-bold mb-4" style="color: #9e0505;">Мои публикации</h4>
+            <div class="row g-4">
+                {% for post in posts %}
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="position-relative">
+                                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="card-img-top"
+                                     style="height: 200px; object-fit: cover; transition: transform 0.3s;">
+                                <div class="overlay position-absolute w-100 h-100 top-0 start-0 d-flex align-items-center justify-content-center"
+                                     style="background: rgba(0, 0, 0, 0.4); color: #dbe3ff; opacity: 0; transition: opacity 0.3s;">
+                                    <a href="{{ post.get_absolute_url }}" class="btn btn-light btn-sm">Подробнее</a>
+                                </div>
+                            </div>
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-dark">{{ post.title }}</h5>
+                                <p class="card-text text-muted">{{ post.content|truncatechars:80 }}</p>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <h5 class="card-title" style="color: #9e0505;">{{ post.title }}</h5>
-                            <p class="card-text text-muted">{{ post.content|truncatechars:80 }}</p>
-                        </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p class="text-center text-muted">У вас пока нет публикаций.</p>
-    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center text-muted">У вас пока нет публикаций.</p>
+        {% endif %}
+    </div>
 </div>
 
 <style>
+    /* Эффекты для карточек */
+    .card:hover img {
+        transform: scale(1.05);
+    }
+
     .card:hover .overlay {
         opacity: 1;
+    }
+
+    /* Обновленный стиль кнопки */
+    .btn-danger {
+        background-color: #9e0505;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background-color: #ea0000;
     }
 </style>
 

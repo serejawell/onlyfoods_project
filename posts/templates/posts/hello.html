@@ -4,32 +4,29 @@
 {% block content %}
     <div id="app" class="container-fluid p-0" style="background-color: #fdf5e6;">
         <!-- Hero Section -->
-<section id="hero"
-         class="vh-100 d-flex align-items-center justify-content-center text-center text-dark position-relative"
-         style="background-color: #fdf5e6;">
-    <div class="container position-relative" data-aos="zoom-in" style="z-index: 10;">
-        <!-- Логотип -->
-        <div class="mb-4">
-            <img src="{% static 'onlyfoods_logo.png' %}" alt="Onlyfoods Logo" class="img-fluid"
-                 style="width: 150px; height: auto;">
-        </div>
-        <!-- Заголовок и описание -->
-        <h1 class="display-2 fw-bold mb-4" style="color: #9e0505;">Onlyfoods</h1>
-        <p class="lead mb-5" style="color: #9e0505;">
-            Превращайте свои блюда в шедевры. Делитесь с миром. Вдохновляйтесь премиум-контентом.
-        </p>
-        <!-- Кнопки -->
-        <a href="{% url 'users:register' %}"
-           class="btn btn-outline-dark btn-lg px-5 me-3"
-           style="border-color: #9e0505; color: #9e0505; z-index: 20; position: relative;">Присоединиться</a>
-        <a href="{% url 'users:login' %}"
-           class="btn btn-primary btn-lg px-5"
-           style="background-color: #9e0505; border: none; z-index: 20; position: relative;">Войти</a>
-    </div>
-    <!-- Анимация частиц -->
-    <div id="particles-js" class="position-absolute w-100 h-100" style="z-index: 1;"></div>
-</section>
+        <section id="hero"
+                 class="vh-100 d-flex align-items-center justify-content-center text-center text-dark position-relative"
+                 style="background-color: #fdf5e6;">
+            <div class="container position-relative" data-aos="zoom-in" style="z-index: 10;">
+                <!-- Логотип -->
+                <div class="mb-4">
+                    <img src="{% static 'onlyfoods_logo.png' %}" alt="Onlyfoods Logo" class="img-fluid"
+                         style="width: 150px; height: auto;">
+                </div>
+                <!-- Заголовок и описание -->
+                <h1 class="display-2 fw-bold mb-4 hover-effect">Onlyfoods</h1>
+                <p class="lead mb-5 hover-effect">
+                    Превращайте свои блюда в шедевры. Делитесь с миром. Вдохновляйтесь премиум-контентом.
+                </p>
+                <!-- Кнопки -->
+                <a href="{% url 'users:register' %}"
+                   class="btn custom-button px-5 me-3"
+                   style="z-index: 20; position: relative;">Присоединиться</a>
 
+            </div>
+            <!-- Анимация частиц -->
+            <div id="particles-js" class="position-absolute w-100 h-100" style="z-index: 1;"></div>
+        </section>
 
         <!-- Popular Recipes Section -->
         <section class="py-5">
@@ -57,7 +54,6 @@
                 </div>
             </div>
         </section>
-
 
         <!-- Load More Recipes -->
         <section id="loadMoreRecipes" class="py-5" style="background-color: #fdf5e6;">
@@ -149,4 +145,44 @@
             retina_detect: true
         });
     </script>
+
+    <style>
+        /* Эффект изменения цвета текста при наведении */
+        .hover-effect {
+            color: #9e0505;
+            transition: color 0.3s ease;
+        }
+
+        .hover-effect:hover {
+            color: #ea0000;
+        }
+
+        .custom-button {
+            display: inline-block;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #9e0505;
+            border: 2px solid #9e0505;
+            background-color: transparent;
+            border-radius: 50px; /* Закругленные края */
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
+        }
+
+        .custom-button:hover {
+            color: #fdf5e6; /* Цвет текста при наведении */
+            background-color: #9e0505; /* Заполнение при наведении */
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Увеличение тени */
+            transform: translateY(-3px); /* Лёгкий подъём */
+        }
+
+        .custom-button:active {
+            transform: translateY(0); /* Возврат при клике */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Уменьшение тени */
+        }
+        
+    </style>
 {% endblock %}

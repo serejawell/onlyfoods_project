@@ -10,15 +10,12 @@
                 Здесь ваши блюда становятся произведениями искусства. Делитесь кулинарными шедеврами с миром, исследуйте премиум-контент от топ-авторов, и вдохновляйтесь каждый день.
             </p>
             <div class="mt-4">
-                <a href="{}" class="btn btn-secondary btn-lg me-3">Начать исследовать</a>
-                <a href="{}" class="btn btn-outline-dark btn-lg">Присоединиться</a>
+                <a href="{% url 'users:login' %}" class="btn btn-outline-dark btn-lg">Присоединиться</a>
             </div>
         </div>
         <div class="col-md-6" data-aos="fade-left">
             <div class="position-relative">
                 <img src="{% static 'gurman.jpeg' %}" alt="Гурман еда" class="img-fluid rounded shadow-lg">
-                <div class="position-absolute bottom-0 start-0 bg-dark text-light p-3 rounded">
-                </div>
             </div>
         </div>
     </div>
@@ -68,7 +65,7 @@
 <!-- Присоединиться секция -->
 <div class="container my-5 text-center">
     <h2 class="mb-4 text-dark">Присоединяйтесь к нашему сообществу уже сегодня!</h2>
-    <a href="{}" class="btn btn-dark btn-lg">Зарегистрироваться</a>
+    <a href="{% url 'users:register' %}" class="btn btn-dark btn-lg">Зарегистрироваться</a>
 </div>
 
 <!-- Новая секция с рецепты для добавления при прокрутке -->
@@ -99,8 +96,8 @@
     // Функция для добавления новых карточек рецептов
     function loadNewRecipes() {
         const newRecipes = [
-            { title: 'Шоколадный торт', description: 'Идеальный десерт для любителей сладкого.', image: '{% static "cake.jpeg" %}' },
-            { title: 'Салат Цезарь', description: 'Легкий и вкусный салат.', image: '{% static "caesar.jpeg" %}' },
+            { title: 'Шоколадный торт', description: 'Идеальный десерт для любителей сладкого.', image: '{% static "tort.jpeg" %}' },
+            { title: 'Салат Цезарь', description: 'Легкий и вкусный салат.', image: '{% static "salat.jpeg" %}' },
             { title: 'Курица в кисло-сладком соусе', description: 'Традиционное блюдо с восточным акцентом.', image: '{% static "chicken.jpeg" %}' }
         ];
 

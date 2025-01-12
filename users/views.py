@@ -1,12 +1,13 @@
 import secrets
 
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView, ListView, DetailView
 
-from users.forms import UserRegistrationForm
+from users.forms import UserRegistrationForm, CustomLoginForm, UserProfileForm
 from users.models import User
-from users.email_messages import send_welcome_email
+from users.email_massages import send_welcome_email
 
 
 class RegisterView(CreateView):
@@ -26,3 +27,40 @@ class RegisterView(CreateView):
         url = f'http://{host}/account/email-confirm/{token}'
         send_welcome_email(user, url)
         return super().form_valid(form)
+
+
+class CustomLoginView(LoginView):
+    '''Кастомный логинвью уже со стилями'''
+    form_class = CustomLoginForm
+    template_name = 'users/login.html'
+
+
+class ProfileView(LoginRequiredMixin, DetailView):
+    '''Контроллер для просмотра профиля'''
+    model = User
+    template_name = 'users/profile.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    '''Контроллер для обновления профиля'''
+    model = User
+    form_class = UserProfileForm
+    success_url = reverse_lazy('users:profile')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+
+class UserListView(LoginRequiredMixin, ListView):
+    model = User
+
+    def get_queryset(self):
+        return User.objects.all().order_by('-date_joined')
+
+
+class UserDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    context_object_name = 'user'

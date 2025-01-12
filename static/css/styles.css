@@ -1,0 +1,42 @@
+/* styles.css */
+
+/* Закругленные углы для полей и кнопок */
+.form-control {
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стиль для кнопки при наведении */
+.btn-dark {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.btn-dark:hover {
+    background-color: #444 !important;
+    transform: scale(1.05);
+}
+
+/* Визуальные улучшения для инпутов и кнопок */
+.input-group-text {
+    background-color: #e9ecef;
+    border-right: none;
+}
+
+input.form-control {
+    border-left: none;
+}
+
+/* Тень и плавные эффекты для контейнера */
+.card {
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+/* Плавные анимации при изменении фокуса */
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    border-color: #007bff;
+}

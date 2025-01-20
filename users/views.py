@@ -1,8 +1,11 @@
 import secrets
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.urls import reverse_lazy
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, UpdateView, ListView, DetailView
 
 from posts.models import Post
@@ -50,6 +53,16 @@ class ProfileView(LoginRequiredMixin, DetailView):
         context['posts'] = Post.objects.filter(author=self.request.user).order_by('-created_at')
         return context
 
+class ProfileDetailView(DetailView):
+    model = User
+    context_object_name = 'user'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile_user = self.get_object()
+        context['posts'] = Post.objects.filter(author=profile_user).order_by('-created_at')
+        return context
+
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     '''Контроллер для обновления профиля'''
@@ -71,3 +84,19 @@ class UserListView(LoginRequiredMixin, ListView):
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
     context_object_name = 'user'
+
+
+@login_required
+def follow_user(request, user_id):
+    """Подписаться на пользователя"""
+    target_user = get_object_or_404(User, id=user_id)
+    if request.user.is_following(target_user):
+        request.user.unfollow(target_user)
+        action = 'unfollowed'
+    else:
+        request.user.follow(target_user)
+        action = 'followed'
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'action': action, 'followers_count': target_user.followers.count()})
+    return HttpResponseRedirect(reverse('users:profile', args=[target_user.id]))

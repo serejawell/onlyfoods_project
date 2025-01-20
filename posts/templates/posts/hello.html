@@ -27,76 +27,210 @@
             <!-- Анимация частиц -->
             <div id="particles-js" class="position-absolute w-100 h-100" style="z-index: 1;"></div>
         </section>
-
-        <!-- Popular Recipes Section -->
-        <section class="py-5">
-            <div class="container">
-                <h2 class="text-center mb-5" style="color: #9e0505;">Популярные работы</h2>
-                <div class="row" id="recipeContainer">
-                    <div class="col-md-push-12 mb-5 recipe-card" data-aos="fade-up" data-aos-delay="300">
-                        <div class="card h-100 shadow-lg border-0 rounded overflow-hidden"
-                             style="transition: transform 0.3s;">
-                            <div class="position-relative">
-                                <img src="{% static 'burger.jpeg' %}" class="card-img-top" alt="Бургер"
-                                     style="height: 600px; object-fit: cover;">
-                                <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center justify-content-center opacity-0 hover-overlay">
-                                    <h5 class="text-light text-center">Смотреть рецепт</h5>
-                                </div>
-                            </div>
-                            <div class="card-body text-center">
-                                <h5 class="card-title" style="color: #9e0505;">Классический бургер</h5>
-                                <p class="card-text text-muted">Для любителей сочного вкуса.</p>
-                                <a href="#" class="btn btn-primary btn-sm"
-                                   style="background-color: #9e0505; border: none;">Подробнее</a>
+        <div class="container mt-5">
+            <h1 class="text-center mb-4" style="color: #9e0505;">Лента</h1>
+            <div class="d-flex flex-column align-items-center">
+                {% for post in posts %}
+                    <div class="card shadow-sm border-0 rounded-3 mb-5" style="width: 100%; max-width: 600px;">
+                        <!-- Шапка поста -->
+                        <div class="d-flex align-items-center p-3">
+                            <img src="{{ post.author.avatar.url }}" alt="Аватар {{ post.author.first_name }}"
+                                 class="rounded-circle me-3"
+                                 style="width: 50px; height: 50px; object-fit: cover;">
+                            <div>
+                                <h6 class="mb-0 fw-bold">{{ post.author.first_name }} {{ post.author.last_name }}</h6>
+                                <small class="text-muted">@{{ post.author.nickname }}</small>
                             </div>
                         </div>
+                        <!-- Изображение поста -->
+                        {% if post.image %}
+                            <div class="position-relative">
+                                <!-- Изображение поста -->
+                                <img src="{{ post.image.url }}"
+                                     class="card-img-top {% if post.is_premium %}blur-image{% endif %}"
+                                     alt="{{ post.title }}"
+                                     style="height: 400px; width: 100%; object-fit: cover;">
+
+                                <!-- Наложение надписи и затемнение для премиум-контента -->
+                                {% if post.is_premium %}
+                                    <div class="premium-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+                                        <span class="premium-text">Premium</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        <!-- Контент поста -->
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold" style="color: #9e0505;">{{ post.title }}</h5>
+                            <p class="card-text text-muted">{{ post.content|truncatechars:150 }}</p>
+                            <p class="text-muted small mb-2">Опубликовано: {{ post.created_at|date:"d M Y, H:i" }}</p>
+                            {% if not post.is_premium %}
+                                <a href="" class="btn btn-outline-danger btn-sm">
+                                    Перейти
+                                </a>
+                            {% else %}
+                                <a href="#" class="btn btn-secondary btn-sm disabled">Доступно с премиумом</a>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
+                {% empty %}
+                    <div class="text-center">
+                        <p class="text-muted">Ваша лента пуста. Подпишитесь на других пользователей, чтобы видеть их
+                            публикации.</p>
+                    </div>
+                {% endfor %}
             </div>
-        </section>
-
-        <!-- Load More Recipes -->
-        <section id="loadMoreRecipes" class="py-5" style="background-color: #fdf5e6;">
-            <div class="container">
-                <h2 class="text-center mb-5" style="color: #9e0505;">Еще рецепты</h2>
-                <div class="row g-4" id="newRecipesContainer">
-                    <!-- Здесь будут появляться новые карточки -->
-                </div>
-            </div>
-        </section>
+        </div>
     </div>
+    <
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js/particles.min.js"></script>
-    <script>
-        // Инициализация AOS
-        AOS.init();
 
-        // Динамическая загрузка новых карточек
-        function loadNewRecipes() {
-            const newRecipes = [
-                {
-                    title: 'Шоколадный торт',
-                    description: 'Идеальный десерт для любителей сладкого.',
-                    image: '{% static "tort.jpeg" %}'
-                },
-                {title: 'Салат Цезарь', description: 'Легкий и вкусный салат.', image: '{% static "salat.jpeg" %}'},
-                {
-                    title: 'Курица в кисло-сладком соусе',
-                    description: 'Традиционное блюдо с восточным акцентом.',
-                    image: '{% static "chicken.jpeg" %}'
-                }
-            ];
+        <style>
+            /* Стиль карточек */
+            .card {
+                transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            }
 
-            const container = document.getElementById('newRecipesContainer');
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            }
 
-            newRecipes.forEach(recipe => {
-                const newRecipeCard = document.createElement('div');
-                newRecipeCard.classList.add('col-md-4', 'mb-4');
-                newRecipeCard.setAttribute('data-aos', 'fade-up');
+            /* Кнопки */
+            .btn-outline-danger {
+                border: 2px solid #9e0505;
+                color: #9e0505;
+                transition: all 0.3s ease-in-out;
+            }
 
-                newRecipeCard.innerHTML = `
+            .btn-outline-danger:hover {
+                background-color: #9e0505;
+                color: white;
+            }
+
+            .blur-image {
+                filter: blur(25px);
+                transition: filter 0.3s ease;
+            }
+
+            /* Наложение для премиум-постов */
+            .premium-overlay {
+                background: rgba(0, 0, 0, 0.6); /* Затемнение фона */
+                color: white;
+                text-align: center;
+                text-shadow: 0 0 10px rgba(0, 0, 0, 0.8); /* Эффект текста */
+                z-index: 2; /* Слой поверх изображения */
+            }
+
+            .premium-text {
+                font-size: 1.5rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+        </style>
+
+        <style>
+            /* Посты */
+            .post-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .post {
+                opacity: 0;
+                transform: translateY(-50px);
+                transition: all 0.5s ease-in-out;
+            }
+
+            .post.show {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            /* Карточки */
+            .card {
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .card:hover {
+                transform: scale(1.02);
+                transition: transform 0.3s ease;
+            }
+
+            /* Эффект для премиум-постов */
+            .premium .card-img-top {
+                filter: blur(25px); /* Размытие изображения */
+            }
+
+            .premium-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.6); /* Затемнение */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .premium-text {
+                font-size: 1.5rem;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+        </style>
+
+        <script>
+            // Анимация появления постов
+            document.addEventListener('DOMContentLoaded', function () {
+                const posts = document.querySelectorAll('.post');
+                let delay = 0;
+
+                posts.forEach(post => {
+                    setTimeout(() => {
+                        post.classList.add('show');
+                    }, delay);
+                    delay += 300; // Увеличиваем задержку для каждого следующего поста
+                });
+            });
+        </script>
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/particles.js/particles.min.js"></script>
+        <script>
+            // Инициализация AOS
+            AOS.init();
+
+            // Динамическая загрузка новых карточек
+            function loadNewRecipes() {
+                const newRecipes = [
+                    {
+                        title: 'Шоколадный торт',
+                        description: 'Идеальный десерт для любителей сладкого.',
+                        image: '{% static "tort.jpeg" %}'
+                    },
+                    {title: 'Салат Цезарь', description: 'Легкий и вкусный салат.', image: '{% static "salat.jpeg" %}'},
+                    {
+                        title: 'Курица в кисло-сладком соусе',
+                        description: 'Традиционное блюдо с восточным акцентом.',
+                        image: '{% static "chicken.jpeg" %}'
+                    }
+                ];
+
+                const container = document.getElementById('newRecipesContainer');
+
+                newRecipes.forEach(recipe => {
+                    const newRecipeCard = document.createElement('div');
+                    newRecipeCard.classList.add('col-md-4', 'mb-4');
+                    newRecipeCard.setAttribute('data-aos', 'fade-up');
+
+                    newRecipeCard.innerHTML = `
                 <div class="card h-100 shadow-lg border-0 rounded">
                     <img src="${recipe.image}" class="card-img-top" alt="${recipe.title}" style="height: 250px; object-fit: cover;">
                     <div class="card-body text-center">
@@ -105,84 +239,84 @@
                         <a href="#" class="btn btn-secondary btn-sm">Смотреть рецепт</a>
                     </div>
                 </div>`;
-                container.appendChild(newRecipeCard);
-            });
-        }
-
-        // Загрузка карточек при скролле
-        window.addEventListener('scroll', () => {
-            const scrollPosition = document.documentElement.scrollTop + window.innerHeight;
-            const loadPosition = document.getElementById('loadMoreRecipes').offsetTop;
-
-            if (scrollPosition >= loadPosition) {
-                loadNewRecipes();
+                    container.appendChild(newRecipeCard);
+                });
             }
-        });
 
-        // Инициализация Particles.js
-        particlesJS("particles-js", {
-            particles: {
-                number: {value: 80, density: {enable: true, value_area: 1000}},
-                color: {value: "#9e0505"},
-                shape: {type: "circle", stroke: {width: 0, color: "#000000"}},
-                opacity: {value: 0.4},
-                size: {value: 11, random: true},
-                line_linked: {enable: true, distance: 1, color: "#9e0505", opacity: 0.5, width: 2},
-                move: {enable: true, speed: 3}
-            },
-            interactivity: {
-                detect_on: "canvas",
-                events: {
-                    onhover: {enable: true, mode: "repulse"},
-                    onclick: {enable: true, mode: "push"},
-                    resize: true
-                },
-                modes: {
-                    repulse: {distance: 200},
-                    push: {particles_nb: 4}
+            // Загрузка карточек при скролле
+            window.addEventListener('scroll', () => {
+                const scrollPosition = document.documentElement.scrollTop + window.innerHeight;
+                const loadPosition = document.getElementById('loadMoreRecipes').offsetTop;
+
+                if (scrollPosition >= loadPosition) {
+                    loadNewRecipes();
                 }
-            },
-            retina_detect: true
-        });
-    </script>
+            });
 
-    <style>
-        /* Эффект изменения цвета текста при наведении */
-        .hover-effect {
-            color: #9e0505;
-            transition: color 0.3s ease;
-        }
+            // Инициализация Particles.js
+            particlesJS("particles-js", {
+                particles: {
+                    number: {value: 80, density: {enable: true, value_area: 1000}},
+                    color: {value: "#9e0505"},
+                    shape: {type: "circle", stroke: {width: 0, color: "#000000"}},
+                    opacity: {value: 0.4},
+                    size: {value: 11, random: true},
+                    line_linked: {enable: true, distance: 1, color: "#9e0505", opacity: 0.5, width: 2},
+                    move: {enable: true, speed: 3}
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: {enable: true, mode: "repulse"},
+                        onclick: {enable: true, mode: "push"},
+                        resize: true
+                    },
+                    modes: {
+                        repulse: {distance: 200},
+                        push: {particles_nb: 4}
+                    }
+                },
+                retina_detect: true
+            });
+        </script>
 
-        .hover-effect:hover {
-            color: #ea0000;
-        }
+        <style>
+            /* Эффект изменения цвета текста при наведении */
+            .hover-effect {
+                color: #9e0505;
+                transition: color 0.3s ease;
+            }
 
-        .custom-button {
-            display: inline-block;
-            padding: 12px 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #9e0505;
-            border: 2px solid #9e0505;
-            background-color: transparent;
-            border-radius: 50px; /* Закругленные края */
-            text-decoration: none;
-            text-align: center;
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
-        }
+            .hover-effect:hover {
+                color: #ea0000;
+            }
 
-        .custom-button:hover {
-            color: #fdf5e6; /* Цвет текста при наведении */
-            background-color: #9e0505; /* Заполнение при наведении */
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Увеличение тени */
-            transform: translateY(-3px); /* Лёгкий подъём */
-        }
+            .custom-button {
+                display: inline-block;
+                padding: 12px 30px;
+                font-size: 1.2rem;
+                font-weight: bold;
+                color: #9e0505;
+                border: 2px solid #9e0505;
+                background-color: transparent;
+                border-radius: 50px; /* Закругленные края */
+                text-decoration: none;
+                text-align: center;
+                transition: all 0.3s ease-in-out;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
+            }
 
-        .custom-button:active {
-            transform: translateY(0); /* Возврат при клике */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Уменьшение тени */
-        }
-        
-    </style>
+            .custom-button:hover {
+                color: #fdf5e6; /* Цвет текста при наведении */
+                background-color: #9e0505; /* Заполнение при наведении */
+                box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Увеличение тени */
+                transform: translateY(-3px); /* Лёгкий подъём */
+            }
+
+            .custom-button:active {
+                transform: translateY(0); /* Возврат при клике */
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Уменьшение тени */
+            }
+
+        </style>
 {% endblock %}

@@ -6,6 +6,10 @@ from phonenumber_field.modelfields import PhoneNumberField
 class User(AbstractUser):
     """Модель пользователя"""
     username = None
+    nickname = models.CharField(
+        max_length=20,
+        verbose_name='Никнейм'
+    )
     first_name = models.CharField(
         max_length=50,
         verbose_name='Имя пользователя',
@@ -49,6 +53,10 @@ class User(AbstractUser):
         null=True,
         verbose_name='Подписчики'
     )
+    is_subscriber = models.BooleanField(
+        default=False,
+        verbose_name='Подписка'
+    )
 
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
@@ -63,6 +71,20 @@ class User(AbstractUser):
     def following_count(self):
         """Возвращает количество подписок"""
         return self.following.count()
+
+    def follow(self, user):
+        """Подписаться на пользователя"""
+        if user != self:
+            self.following.add(user)
+
+    def unfollow(self, user):
+        """Отписаться от пользователя"""
+        if user != self:
+            self.following.remove(user)
+
+    def is_following(self, user):
+        """Проверить, подписан ли текущий пользователь на другого"""
+        return self.following.filter(id=user.id).exists()
 
     class Meta:
         verbose_name = 'Пользователь'

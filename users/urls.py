@@ -4,7 +4,7 @@ from users.apps import UsersConfig
 
 from users.functions import user_reset_password, email_verification
 from users.views import RegisterView, CustomLoginView, ProfileUpdateView, \
-    UserListView, UserDetailView, ProfileView
+    UserListView, UserDetailView, ProfileView, ProfileDetailView, follow_user
 
 app_name = UsersConfig.name
 
@@ -16,4 +16,6 @@ urlpatterns = [
     path('password-reset/', user_reset_password, name='password_reset'),
     path('my_profile/', ProfileView.as_view(), name='profile'),
     path('my_profile/update/', ProfileUpdateView.as_view(), name='profile_update'),
+    path('<int:pk>/', ProfileDetailView.as_view(), name='profile_detail'),
+    path('<int:user_id>/follow/', follow_user, name='follow_user'),
 ]

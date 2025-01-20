@@ -1,0 +1,61 @@
+{% extends 'posts/base.html' %}
+{% block title %}Подписки - Onlyfoods{% endblock %}
+{% load static %}
+{% block content %}
+    {% if user.is_subscriber %}
+        <h1 class="text-center mb-4" style="color: #9e0505;">У Вас уже есть подписка</h1>
+    {% else %}
+        <div class="container py-5">
+        <h1 class="text-center mb-4" style="color: #9e0505;">Доступные подписки</h1>
+        <div class="row">
+        {% for subscription in subscriptions %}
+            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title fw-bold" style="color: #9e0505;">{{ subscription.name }}</h5>
+                        <p class="card-text text-muted">{{ subscription.description }}</p>
+                        <p class="card-text fw-bold" style="color: #9e0505;">{{ subscription.price }} ₽</p>
+                        <form method="post" action="{% url 'subscription:subscribe' subscription.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Оформить подписку</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+</div>
+
+    <style>
+        .btn-danger {
+            background-color: #9e0505;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #ea0000;
+        }
+
+        /* Карточки */
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+
+    <!-- Подключение AOS (Animate on Scroll) -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script>
+        // Инициализация AOS
+        AOS.init({
+            duration: 1000, // Длительность анимации
+            offset: 100, // Смещение триггера анимации
+        });
+    </script>
+{% endblock %}

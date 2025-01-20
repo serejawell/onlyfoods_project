@@ -13,10 +13,11 @@ class Command(BaseCommand):
 
         # Создание суперпользователя
         user = User.objects.create(
-            email='admin@example.com',  # укажите нужный email
-            first_name='Admin',
-            last_name='Adminov',
-            phone_number='+12125552368',
+            email='admin2@example.com',  # укажите нужный email
+            first_name='Admin2',
+            last_name='Adminov2',
+            phone_number='+12125552369',
+            nickname='admin2',
             is_staff=True,
             is_superuser=True,
         )

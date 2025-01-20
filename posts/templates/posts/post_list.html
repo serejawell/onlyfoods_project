@@ -1,0 +1,100 @@
+{% extends 'posts/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4" style="color: #9e0505;">Лента</h1>
+    <div class="d-flex flex-column align-items-center">
+        {% for post in posts %}
+        <div class="card shadow-sm border-0 rounded-3 mb-5" style="width: 100%; max-width: 600px;">
+            <!-- Шапка поста -->
+            <div class="d-flex align-items-center p-3">
+                <img src="{{ post.author.avatar.url }}" alt="Аватар {{ post.author.first_name }}"
+                     class="rounded-circle me-3"
+                     style="width: 50px; height: 50px; object-fit: cover;">
+                <div>
+                    <h6 class="mb-0 fw-bold">{{ post.author.first_name }} {{ post.author.last_name }}</h6>
+                    <small class="text-muted">@{{ post.author.nickname }}</small>
+                </div>
+            </div>
+            <!-- Изображение поста -->
+            {% if post.image %}
+                <div class="position-relative">
+                    <!-- Изображение поста -->
+                    <img src="{{ post.image.url }}"
+                         class="card-img-top {% if post.is_premium %}blur-image{% endif %}"
+                         alt="{{ post.title }}"
+                         style="height: 400px; width: 100%; object-fit: cover;">
+
+                    <!-- Наложение надписи и затемнение для премиум-контента -->
+                    {% if post.is_premium %}
+                        <div class="premium-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+                            <span class="premium-text">Премиум контент</span>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+            <!-- Контент поста -->
+            <div class="card-body">
+                <h5 class="card-title fw-bold" style="color: #9e0505;">{{ post.title }}</h5>
+                <p class="card-text text-muted">{{ post.content|truncatechars:150 }}</p>
+                <p class="text-muted small mb-2">Опубликовано: {{ post.created_at|date:"d M Y, H:i" }}</p>
+                {% if not post.is_premium %}
+                    <a href="" class="btn btn-outline-danger btn-sm">
+                        Перейти
+                    </a>
+                {% else %}
+                    <a href="#" class="btn btn-secondary btn-sm disabled">Доступно с премиумом</a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center">
+            <p class="text-muted">Ваша лента пуста. Подпишитесь на других пользователей, чтобы видеть их публикации.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* Стиль карточек */
+    .card {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Кнопки */
+    .btn-outline-danger {
+        border: 2px solid #9e0505;
+        color: #9e0505;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #9e0505;
+        color: white;
+    }
+
+    .blur-image {
+        filter: blur(25px);
+        transition: filter 0.3s ease;
+    }
+
+    /* Наложение для премиум-постов */
+    .premium-overlay {
+        background: rgba(0, 0, 0, 0.6); /* Затемнение фона */
+        color: white;
+        text-align: center;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.8); /* Эффект текста */
+        z-index: 2; /* Слой поверх изображения */
+    }
+
+    .premium-text {
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+</style>
+{% endblock %}

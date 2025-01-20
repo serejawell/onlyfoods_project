@@ -139,6 +139,10 @@ LOGIN_REDIRECT_URL = '/'  # При входе перенаправляет на 
 LOGOUT_REDIRECT_URL = '/'  # При выходе перенаправляет на данный урл
 LOGIN_URL = 'users:login'
 
+
+STRIPE_SECRET_KEY =os.getenv('STRIPE_SECRET_KEY')
+STRIPE_PUBLISHABLE_KEY =os.getenv('STRIPE_PUBLISHABLE_KEY')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

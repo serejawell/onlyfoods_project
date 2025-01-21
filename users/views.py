@@ -1,12 +1,21 @@
 import secrets
 
+from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, UpdateView, ListView, DetailView
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
+from rest_framework import status
 
 from posts.models import Post
 from users.forms import UserRegistrationForm, CustomLoginForm, UserProfileForm
@@ -52,6 +61,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
         # Получаем все посты текущего пользователя
         context['posts'] = Post.objects.filter(author=self.request.user).order_by('-created_at')
         return context
+
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = User
@@ -100,3 +110,38 @@ def follow_user(request, user_id):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'action': action, 'followers_count': target_user.followers.count()})
     return HttpResponseRedirect(reverse('users:profile', args=[target_user.id]))
+
+
+# SERIALIZERS
+@method_decorator(csrf_exempt, name='dispatch')
+class RegisterApiView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Пользователь успешно зарегистрирован"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LoginApiView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        import json
+        data = json.loads(request.body)
+        phone_number = data.get('phone_number')
+        password = data.get('password')
+        user = authenticate(request, username=phone_number, password=password)
+        if user:
+            return JsonResponse({'message': 'Вход выполнен успешно'}, status=200)
+        return JsonResponse({'error': 'Неверный номер телефона или пароль'}, status=401)
+
+
+class UserApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)

@@ -1,0 +1,12 @@
+{% extends 'posts/base.html' %}
+{% block title %}Удалить пост - Onlyfoods{% endblock %}
+{% block content %}
+<div class="container py-5 text-center">
+    <h1>Вы уверены, что хотите удалить пост "{{ post.title }}"?</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-lg">Удалить</button>
+        <a href="{% url 'posts:list' %}" class="btn btn-secondary btn-lg">Отмена</a>
+    </form>
+</div>
+{% endblock %}

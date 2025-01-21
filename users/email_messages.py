@@ -16,7 +16,7 @@ def send_welcome_email(user, url):
 
     # Отправляем письмо
     email = EmailMultiAlternatives(
-        subject='Welcome to the Serega Agency!',
+        subject='Welcome to Onlyfoods!',
         body=text_content,
         from_email=settings.EMAIL_HOST_USER,
         to=[user.email],

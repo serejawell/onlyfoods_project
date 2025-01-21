@@ -15,12 +15,12 @@ class UserRegistrationForm(UserCreationForm, StyleFormMixin):
 
     class Meta:
         model = User
-        fields = ['first_name','last_name','email','avatar','phone_number', 'password1','password2']
+        fields = ['first_name','last_name','nickname','email','avatar','phone_number', 'password1','password2']
 
 class UserProfileForm(StyleFormMixin, UserChangeForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'avatar']
+        fields = ['first_name', 'last_name', 'nickname','avatar']
 
 class CustomLoginForm(StyleFormMixin  ,AuthenticationForm):
     pass

@@ -16,7 +16,7 @@ class Command(BaseCommand):
             email='admin@example.com',  # укажите нужный email
             first_name='Admin',
             last_name='Adminov',
-            phone_number='+01234567890',
+            phone_number='+12125552368',
             is_staff=True,
             is_superuser=True,
         )

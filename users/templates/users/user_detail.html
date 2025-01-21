@@ -1,60 +1,148 @@
 {% extends 'posts/base.html' %}
+{% block title %}Профиль - Onlyfoods{% endblock %}
+{% load static %}
 {% load my_tags %}
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <!-- Левая колонка с аватаром -->
-        <div class="col-md-4 text-center">
-            <img src="{{ user.avatar | media_filter }}" alt="Аватар пользователя" class="rounded-circle shadow mb-4"
-                 style="width: 180px; height: 180px; object-fit: cover;">
-            <h4>{{ user.first_name }} {{ user.last_name }}</h4>
+    <div class="container-fluid p-0" style="background-color: #f8f9fa;">
+        <!-- Шапка профиля -->
+        <section class="profile-header py-4 text-center" style="background: linear-gradient(135deg, #fdf5e6, #fdf5e6);">
+            <div class="container d-flex flex-column align-items-center">
+                <div class="d-flex align-items-center">
+                    <!-- Аватар -->
+                    <div class="position-relative me-4">
+                        <img src="{{ user.avatar | media_filter }}" alt="Аватар пользователя"
+                             class="rounded-circle shadow"
+                             style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #fdf5e6;">
+                    </div>
+                    <!-- Имя, username и статистика -->
+                    <div class="text-start">
+                        <h2 class="fw-bold" style="color: #9e0505;">{{ user.first_name }} {{ user.last_name }}</h2>
+                        <p class="text-muted">
+                            {% if user.is_premium %}
+                                <img src="{% static 'premium_logo.png' %}" alt="Premium"
+                                     style="width: 30px; height: 30px; vertical-align: middle; margin-right: 1px;">
+                            {% endif %}
+                            @{{ user.nickname }}
+                        </p>
+                        {% if user.is_verified %}
+                            <span class="badge bg-success text-white">Проверенный пользователь</span>
+                        {% endif %}
+                        <div class="d-flex mt-3">
+                            <div class="me-3 text-center">
+                                <h5 class="fw-bold" style="color: #9e0505;">{{ user.posts_count }}</h5>
+                                <p class="text-muted small mb-0">Публикации</p>
+                            </div>
+                            <div class="me-3 text-center">
+                                <h5 class="fw-bold" style="color: #9e0505;"><span
+                                        id="followers-count">{{ user.followers_count }}</span></h5>
+                                <p class="text-muted small mb-0">Подписчики</p>
+                            </div>
+                            <div class="text-center">
+                                <h5 class="fw-bold" style="color: #9e0505;">{{ user.following_count }}</h5>
+                                <p class="text-muted small mb-0">Подписки</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Кнопка подписки/отписки -->
+                <div class="mt-4">
+                    {% if request.user.is_authenticated and request.user != user %}
+                        <form method="post" action="{% url 'users:follow_user' user.id %}" id="follow-form">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="btn {% if request.user|is_following:user %}btn-outline-danger{% else %}btn-danger{% endif %}">
+                                {% if request.user|is_following:user %}Отписаться{% else %}Подписаться{% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
 
-            <!-- Группа пользователя -->
-            {% if user.groups.all %}
-                <h5 class="mt-3">
-                    <span class="badge
-                        {% if user.groups.first.name == "manager" %}
-                            bg-success
-                        {% elif user.groups.first.name == "admin" %}
-                            bg-danger
-                        {% endif %}">
-                        {{ user.groups.first.name | title }}
-                    </span>
-                </h5>
+        <!-- Контент профиля -->
+        <div class="container py-5">
+            {% if posts %}
+                <h4 class="text-center fw-bold mb-4" style="color: #9e0505;">Публикации</h4>
+                <div class="row g-4">
+                    {% for post in posts %}
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm">
+                                <div class="position-relative">
+                                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="card-img-top"
+                                         style="height: 200px; object-fit: cover; transition: transform 0.3s;">
+                                    <div class="overlay position-absolute w-100 h-100 top-0 start-0 d-flex align-items-center justify-content-center"
+                                         style="background: rgba(0, 0, 0, 0.4); color: #dbe3ff; opacity: 0; transition: opacity 0.3s;">
+                                        <a href="{{ post.get_absolute_url }}" class="btn btn-light btn-sm">Подробнее</a>
+                                    </div>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title text-dark">{{ post.title }}</h5>
+                                    <p class="card-text text-muted">{{ post.content|truncatechars:80 }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-center text-muted">У пользователя пока нет публикаций.</p>
             {% endif %}
-
-            <!-- Статус активности -->
-            <div class="mt-2">
-                {% if user.is_active %}
-                    <span class="badge bg-primary">Активен</span>
-                {% else %}
-                    <span class="badge bg-secondary">Неактивен</span>
-                {% endif %}
-            </div>
-
-            <div class="mt-4">
-                <a href="{% url 'users:profile_update' %}" class="btn btn-outline-primary">Редактировать профиль</a>
-            </div>
-            <div class="mt-2">
-                <a href="{% url 'users:logout' %}" class="btn btn-outline-danger">Выйти</a>
-            </div>
-        </div>
-
-        <!-- Правая колонка с информацией -->
-        <div class="col-md-8">
-            <h5 class="mb-4">Детали профиля</h5>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                    <strong>Дата регистрации:</strong> {{ user.date_joined|date:"d M Y" }}
-                </li>
-                <li class="list-group-item">
-                    <strong>Email:</strong> {{ user.email }}
-                </li>
-                <li class="list-group-item">
-                    <strong>Номер телефона:</strong> {% if user.phone %}{{ user.phone }}{% else %}Отсутствует{% endif %}
-                </li>
-            </ul>
         </div>
     </div>
-</div>
+
+    <style>
+        /* Эффекты для карточек */
+        .card:hover img {
+            transform: scale(1.05);
+        }
+
+        .card:hover .overlay {
+            opacity: 1;
+        }
+
+        /* Обновленный стиль кнопки */
+        .btn-danger {
+            background-color: #9e0505;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #ea0000;
+        }
+    </style>
+
+    <script>
+        // AJAX для подписки/отписки
+        document.addEventListener('DOMContentLoaded', function () {
+            const followForm = document.getElementById('follow-form');
+            if (followForm) {
+                followForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    const url = followForm.action;
+                    const csrfToken = followForm.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrfToken,
+                        },
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            const button = followForm.querySelector('button');
+                            if (data.action === 'followed') {
+                                button.textContent = 'Отписаться';
+                                button.classList.remove('btn-danger');
+                                button.classList.add('btn-outline-danger');
+                            } else {
+                                button.textContent = 'Подписаться';
+                                button.classList.remove('btn-outline-danger');
+                                button.classList.add('btn-danger');
+                            }
+                            document.getElementById('followers-count').textContent = data.followers_count;
+                        });
+                });
+            }
+        });
+    </script>
 {% endblock %}

@@ -20,8 +20,6 @@ class Post(models.Model):
     )
     image = models.ImageField(
         upload_to='posts/images',
-        blank=True,
-        null=True,
         verbose_name='Изображение'
     )
     is_premium = models.BooleanField(

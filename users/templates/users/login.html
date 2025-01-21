@@ -2,34 +2,64 @@
 {% block title %}Вход - Onlyfoods{% endblock %}
 {% load static %}
 {% block content %}
-    <!-- Кнопка для открытия модального окна -->
-    <div class="container text-center py-5">
-        <a href="#" class="btn btn-dark btn-lg" data-bs-toggle="modal" data-bs-target="#loginModal">Войти</a>
+    <div class="container py-5">
+        <!-- Кнопка для открытия модального окна -->
+        <div class="text-center">
+            <a href="#" class="btn btn-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#loginModal"
+               style="background-color: #9e0505; border: none;">
+                Войти в Onlyfoods
+            </a>
+        </div>
     </div>
 
     <!-- Модальное окно -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="loginModalLabel">Вход в Onlyfoods</h5>
+                <!-- Шапка модального окна -->
+                <div class="modal-header" style="background-color: #9e0505; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    <h5 class="modal-title text-white" id="loginModalLabel">Добро пожаловать в Onlyfoods</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
+
+                <!-- Тело модального окна -->
                 <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <img src="{% static 'onlyfoods_logo.png' %}" alt="Логотип Onlyfoods" class="img-fluid"
+                             style="width: 100px; height: auto;">
+                    </div>
                     <form method="post" enctype="multipart/form-data" class="p-3">
                         {% csrf_token %}
                         {{ form.as_p }}
+
+                        <!-- Кнопка входа -->
                         <div class="text-center mt-3">
-                            <button type="submit" class="btn btn-outline-dark w-100">Войти</button>
+                            <button type="submit" class="btn btn-primary btn-lg w-100"
+                                    style="background-color: #9e0505; border: none;">
+                                Войти
+                            </button>
                         </div>
+
+                        <!-- Ссылка на восстановление пароля -->
                         <div class="text-center mt-2">
-                            <a href="{% url 'users:password_reset' %}" class="text-decoration-none">Забыли пароль?</a>
+                            <a href="{% url 'users:password_reset' %}" class="text-decoration-none"
+                               style="color: #9e0505;">
+                                Забыли пароль?
+                            </a>
                         </div>
-                        <!-- Кнопка регистрации -->
-                        <div class="text-center mt-3">
-                            <a href="{% url 'users:register' %}" class="btn btn-dark btn-lg w-100">Регистрация</a>
+
+                        <!-- Кнопка для регистрации -->
+                        <div class="text-center mt-4">
+                            <a href="{% url 'users:register' %}" class="btn btn-outline-dark btn-lg w-100">Создать
+                                аккаунт</a>
                         </div>
                     </form>
+                </div>
+
+                <!-- Подвал модального окна -->
+                <div class="modal-footer" style="background: #fdf5e6;">
+                    <p class="text-center w-100 mb-0" style="color: #9e0505;">© 2025 Onlyfoods. Все права защищены.</p>
                 </div>
             </div>
         </div>

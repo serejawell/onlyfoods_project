@@ -22,6 +22,7 @@ class User(AbstractUser):
         upload_to='users/avatars',
         blank=True,
         null=True,
+        default='default_avatar.png',
         verbose_name='Аватар'
     )
     bio = models.TextField(
@@ -43,7 +44,8 @@ class User(AbstractUser):
     )
     phone_number = PhoneNumberField(
         unique=True,
-        verbose_name="Телефон"
+        verbose_name="Телефон",
+        help_text='в формате +7'
     )
     followers = models.ManyToManyField(
         'self',  # Связь с той же моделью
@@ -53,9 +55,9 @@ class User(AbstractUser):
         null=True,
         verbose_name='Подписчики'
     )
-    is_subscriber = models.BooleanField(
+    is_premium = models.BooleanField(
         default=False,
-        verbose_name='Подписка'
+        verbose_name='Премиум'
     )
 
     USERNAME_FIELD = 'phone_number'

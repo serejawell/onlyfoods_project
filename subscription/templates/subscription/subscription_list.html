@@ -2,7 +2,7 @@
 {% block title %}Подписки - Onlyfoods{% endblock %}
 {% load static %}
 {% block content %}
-    {% if user.is_subscriber %}
+    {% if user.is_premium %}
         <h1 class="text-center mb-4" style="color: #9e0505;">У Вас уже есть подписка</h1>
     {% else %}
         <div class="container py-5">
@@ -14,8 +14,8 @@
                     <div class="card-body text-center">
                         <h5 class="card-title fw-bold" style="color: #9e0505;">{{ subscription.name }}</h5>
                         <p class="card-text text-muted">{{ subscription.description }}</p>
-                        <p class="card-text fw-bold" style="color: #9e0505;">{{ subscription.price }} ₽</p>
-                        <form method="post" action="{% url 'subscription:subscribe' subscription.id %}">
+                        <p class="card-text fw-bold" style="color: #9e0505;">{{ subscription.price }} $</p>
+                        <form method="post" action="{% url 'subscription:checkout' subscription.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger">Оформить подписку</button>
                         </form>
@@ -25,7 +25,7 @@
         {% endfor %}
     {% endif %}
 </div>
-</div>
+    </div>
 
     <style>
         .btn-danger {

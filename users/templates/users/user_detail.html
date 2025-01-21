@@ -18,7 +18,7 @@
                     <div class="text-start">
                         <h2 class="fw-bold" style="color: #9e0505;">{{ user.first_name }} {{ user.last_name }}</h2>
                         <p class="text-muted">
-                            {% if user.is_subscriber %}
+                            {% if user.is_premium %}
                                 <img src="{% static 'premium_logo.png' %}" alt="Premium"
                                      style="width: 30px; height: 30px; vertical-align: middle; margin-right: 1px;">
                             {% endif %}

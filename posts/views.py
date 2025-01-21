@@ -1,7 +1,7 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, ListView
+from django.views.generic import TemplateView, CreateView, ListView, DetailView, UpdateView, DeleteView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 
@@ -10,10 +10,9 @@ from posts.models import Post
 from posts.serializers import PostSerializer
 
 
-class HomePageView(ListView):
-    """Главная страница"""
+class PostListView(LoginRequiredMixin, ListView):
     model = Post
-    template_name = 'posts/hello.html'
+    template_name = 'posts/post_list.html'
     context_object_name = 'posts'
 
     def get_queryset(self):
@@ -22,6 +21,24 @@ class HomePageView(ListView):
 
 class AboutPageView(TemplateView):
     template_name = 'posts/about.html'
+
+class PostDetailView(DetailView):
+    model = Post
+
+class PostUpdateView(UpdateView):
+    model = Post
+    fields = ['title', 'content', 'image','is_premium']
+    success_url = reverse_lazy('users:profile')
+
+    def get_queryset(self):
+        return Post.objects.filter(author=self.request.user)
+
+class PostDeleteView(DeleteView):
+    model = Post
+    success_url = reverse_lazy('posts:list')
+
+    def get_queryset(self):
+        return Post.objects.filter(author=self.request.user)
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -34,24 +51,9 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class PostListView(LoginRequiredMixin, ListView):
-    model = Post
-    template_name = 'posts/post_list.html'
-    context_object_name = 'posts'
-
-    def get_queryset(self):
-        """Возвращает посты только тех, на кого подписан пользователь"""
-        user = self.request.user
-        if user.is_authenticated:
-            # Получаем список пользователей, на которых подписан текущий пользователь
-            followed_users = user.following.all()
-            # Возвращаем посты этих пользователей, исключая свои
-            return Post.objects.filter(author__in=followed_users).exclude(author=user).order_by('-created_at')
-        return Post.objects.none()
-
 
 #Serializers
-class PostListAPIView(APIView):
+class PostListAPIView(LoginRequiredMixin, APIView):
     """
     API для получения списка постов с пагинацией.
     """

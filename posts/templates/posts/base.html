@@ -109,7 +109,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'posts:base' %}">
+        <a class="navbar-brand" href="{% url 'posts:list' %}">
             <img src="{% static 'onlyfoods_logo.png' %}" alt="Onlyfoods">
             Onlyfoods
         </a>
@@ -120,9 +120,6 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'posts:list' %}">Моя лента</a>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'users:profile' %}">Профиль</a>
                     </li>
@@ -137,7 +134,7 @@
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'posts:base' %}">Главная</a>
+                        <a class="nav-link" href="{% url 'posts:list' %}">Главная</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'subscription:subscribe_list' %}">Премиум</a>

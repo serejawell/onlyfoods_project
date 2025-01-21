@@ -28,7 +28,7 @@ class RegisterView(CreateView):
         user.token = token
         user.save()
         host = self.request.get_host()
-        url = f'http://{host}/account/email-confirm/{token}'
+        url = f'http://{host}/users/email-confirm/{token}'
         send_welcome_email(user, url)
         return super().form_valid(form)
 
@@ -53,7 +53,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
         context['posts'] = Post.objects.filter(author=self.request.user).order_by('-created_at')
         return context
 
-class ProfileDetailView(DetailView):
+class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = User
     context_object_name = 'user'
 

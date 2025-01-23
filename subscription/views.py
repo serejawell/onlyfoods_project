@@ -1,16 +1,14 @@
+from django.urls import reverse
+from django.conf import settings
 import stripe
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.views import View
-
 from django.views.generic import ListView, RedirectView
-from django.shortcuts import get_object_or_404, redirect
-
 from onlyfoods import settings
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.timezone import now
+from datetime import timedelta
 from .models import Subscription, UserSubscription
-from users.models import User
-
-
 
 
 class SubscriptionListView(ListView):
@@ -19,19 +17,18 @@ class SubscriptionListView(ListView):
     context_object_name = 'subscriptions'
 
 
-from django.shortcuts import get_object_or_404, redirect
-from django.views import View
-from django.http import JsonResponse
-from django.conf import settings
-import stripe
-from .models import Subscription
-
 class CreateCheckoutSessionView(View):
     """Создание платежной сессии Stripe"""
     def post(self, request, *args, **kwargs):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         subscription_id = kwargs['pk']
         subscription = get_object_or_404(Subscription, id=subscription_id)
+
+        # Генерируем URL для success с передачей subscription_id
+        success_url = request.build_absolute_uri(
+            reverse('subscription:success') + f"?subscription_id={subscription.id}"
+        )
+        cancel_url = request.build_absolute_uri(reverse('subscription:cancel'))
 
         # Создание платежной сессии
         session = stripe.checkout.Session.create(
@@ -47,30 +44,52 @@ class CreateCheckoutSessionView(View):
                 'quantity': 1,
             }],
             mode='payment',
-            success_url=request.build_absolute_uri('/success/'),  # URL при успешной оплате
-            cancel_url=request.build_absolute_uri('/cancel/'),  # URL при отмене
+            success_url=success_url,  # Указываем правильный URL
+            cancel_url=cancel_url,  # URL при отмене
         )
 
-        # Перенаправление пользователя на страницу оплаты
         return redirect(session.url)
 
 
 
-class PaymentSuccessView(View):
+
+
+
+
+
+class PaymentSuccessView(LoginRequiredMixin, View):
     """Обработка успешного платежа"""
     def get(self, request):
-        # Найти пользователя и добавить ему подписку
         user = request.user
-        subscription_id = request.GET.get('subscription_id')  # Передайте ID подписки через параметры
+        subscription_id = request.GET.get('subscription_id')  # Берём ID подписки из URL
+
+        if not subscription_id:
+            return render(request, 'subscription/error.html', {'message': 'Ошибка: Подписка не найдена'})
+
+        # Получаем подписку
         subscription = get_object_or_404(Subscription, id=subscription_id)
 
-        # Создать запись о подписке
+        # Создаём запись о подписке
         UserSubscription.objects.create(
             user=user,
-            subscription=subscription
+            subscription=subscription,
+            start_date=now(),
+            end_date=now() + timedelta(days=subscription.duration_days)
         )
 
-        return render(request, 'subscriptions/success.html')
+        # Делаем пользователя премиумным
+        user.is_premium = True
+        user.save()
+
+        return render(request, 'subscription/success.html', {'subscription': subscription})
+
+
+        # Обновляем статус пользователя
+        user.is_premium = True
+        user.save()
+
+        return render(request, 'subscriptions/success.html', {'subscription': subscription})
+
 
 
 class PaymentCancelView(View):

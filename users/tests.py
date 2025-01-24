@@ -4,7 +4,7 @@ from users.models import User
 
 @pytest.fixture
 def user(db, django_user_model):
-    return django_user_model.objects.create_user(
+    return django_user_model.objects.create(
         phone_number='+123456789',
         password='password123',
         first_name='Test',

@@ -23,7 +23,7 @@ def test_user_registration(client):
 @pytest.fixture
 def user(db):
     """Фикстура для создания пользователя"""
-    return User.objects.create_user(
+    return User.objects.create(
         phone_number='+123456789',
         password='password123',
         first_name='Test',

@@ -3,6 +3,17 @@ from django.urls import reverse
 from users.models import User
 
 
+@pytest.fixture
+def user(db):
+    """Фикстура для создания пользователя"""
+    return User.objects.create(
+        phone_number='+123456789',
+        password='password123',
+        first_name='Test',
+        last_name='User',
+        nickname='testuser'
+    )
+
 @pytest.mark.django_db
 def test_user_registration(client):
     """Тест регистрации пользователя"""

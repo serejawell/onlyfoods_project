@@ -6,7 +6,7 @@ from users.models import User
 
 @pytest.fixture
 def user(db):
-    return User.objects.create_user(
+    return User.objects.create(
         phone_number='+123456789',
         password='password123',
         first_name='Test',
